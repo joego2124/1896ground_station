@@ -17,23 +17,13 @@
    <property name="enabled">
     <bool>true</bool>
    </property>
-   <widget class="QGraphicsView" name="graphicsView">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>271</width>
-      <height>231</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>250</y>
-      <width>58</width>
-      <height>61</height>
+      <width>77</width>
+      <height>83</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -60,6 +50,17 @@
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>251</width>
+      <height>221</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="lidarGraph"/>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -67,7 +68,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>18</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

@@ -4,33 +4,68 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from threading import Thread
+import pyqtgraph as pg
+import numpy as np
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
 from python_socket_test.DroneClients import DroneClients
 
-Form, Window = uic.loadUiType("main.ui")
+class GroundStation:
 
-app = QApplication([])
-window = Window()
+	def __init__(self):
+		Form, Window = uic.loadUiType("main.ui")		
+		map = 0  # get_map
+		telemetry = 0 #get_telemetry
 
-form = Form()
-form.setupUi(window)
+		self.app = QApplication([])
+		self.window = Window()
+		self.drone_clients = DroneClients(map, telemetry,"192.168.1.107", 5050 )
+		self.connected = False
 
+		self.form = Form()
+		self.form.setupUi(self.window)
 
-def startDroneClient():
-	map = 0  # get_map
-	telemetry = 0 #get_telemetry
-	stop_threads = False
+		self.canvas = FigureCanvas(plt.Figure())
+		self.form.lidarGraph.addWidget(self.canvas)
+		self.ax = self.canvas.figure.add_subplot(projection='polar')
+		self.ax.set_rmax(4000)
+		self.ax.grid(True)
 
-	# map object, telemetry object, SERVER, PORT
-	drone_clients = DroneClients(map, telemetry,"192.168.1.108", 5050 )
-	drone_clients.run()
-	drone_clients.send_command("START")
-	drone_clients.send_command("STOP")
-	drone_clients.send_command("ARM")
-	drone_clients.send_command("DISARM")
-	print('done')
+		self.form.connectButton.clicked.connect(self.connectDrone)
 
-form.connectButton.clicked.connect(startDroneClient)
+		self.lidar_render_thread = Thread(target = self.update_lidar_render)
 
-window.show()
-app.exec_()
+	def start(self):
+		self.window.show()
+		self.app.exec_()
+
+	def update_lidar_render(self):
+		while self.connected:
+			arr = self.drone_clients.current_lidar_reading
+			self.ax.clear()
+			theta = np.radians(arr[:, 1])
+			self.ax.scatter(theta, arr[:, 2], s = 1)
+			
+			self.canvas.draw()
+			sleep(.5)
+
+	def connectDrone(self):
+		if not self.connected:
+			self.connected = True
+			self.drone_clients.run()
+			self.lidar_thread = Thread(target = self.update_lidar_render)
+			self.lidar_thread.start()
+		else:
+			self.connected = False
+			self.drone_clients.stop()
+			self.lidar_thread.join()
+
+def main():
+	gs = GroundStation()
+	gs.start()
+
+if __name__ == "__main__":
+    main()
