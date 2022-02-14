@@ -1,3 +1,6 @@
 [submodule ".\\python_socket_test\\"]
 	path = .\\python_socket_test\\
 	url = https://github.com/Jchuk99/python_socket_test.git
+[submodule "FastestRplidar"]
+	path = FastestRplidar
+	url = https://github.com/thehapyone/FastestRplidar.git
