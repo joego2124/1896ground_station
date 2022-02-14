@@ -46,11 +46,10 @@ class GroundStation:
 		while self.connected:
 			arr = self.drone_clients.current_lidar_reading
 			self.ax.clear()
-			theta = np.radians(arr[:, 1])
-			self.ax.scatter(theta, arr[:, 2], s = 1)
+			self.ax.scatter(np.radians(arr[:, 0]), arr[:, 1], s = 1)
 			
 			self.canvas.draw()
-			sleep(.5)
+			sleep(.1)
 
 	def connectDrone(self):
 		if not self.connected:
